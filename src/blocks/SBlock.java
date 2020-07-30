@@ -2,18 +2,18 @@ package blocks;
 
 public class SBlock extends Block {
 
-    public SBlock(float initX, float initY, int orientation) {
+    public SBlock(int initX, int initY, int orientation) {
         super(initX, initY, orientation, new int[] {0, 255, 0});
     }
 
-    public float[] getPositions() {
-        return new float[] {super.getX() - (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 1.5f),
-                super.getX() - (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() - (super.SQUARE_SIZE * 1.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() - (super.SQUARE_SIZE * 1.5f), super.getY() + (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 0.5f), super.getY() + (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 1.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 1.5f), super.getY() - (super.SQUARE_SIZE * 1.5f)};
+    public SBlock() {
+        super(new int[] {0, 255, 0});
+    }
+
+    public int[] getPositions() {
+        return new int[] {super.getX(), super.getY(),
+            super.getX(), super.getY() - 1,
+            super.getX() + 1, super.getY() - 1,
+            super.getX() - 1, super.getY()};
     }
 }

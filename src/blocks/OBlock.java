@@ -2,14 +2,18 @@ package blocks;
 
 public class OBlock extends Block {
 
-    public OBlock(float initX, float initY, int orientation) {
+    public OBlock(int initX, int initY, int orientation) {
         super(initX, initY, orientation, new int[] {255, 255, 0});
     }
 
-    public float[] getPositions() {
-        return new float[] {super.getX() - super.SQUARE_SIZE, super.getY() - super.SQUARE_SIZE,
-                super.getX() - super.SQUARE_SIZE, super.getY() + super.SQUARE_SIZE,
-                super.getX() + super.SQUARE_SIZE, super.getY() + super.SQUARE_SIZE,
-                super.getX() + super.SQUARE_SIZE, super.getY() - super.SQUARE_SIZE};
+    public OBlock() {
+        super(new int[] {255, 255, 0});
+    }
+
+    public int[] getPositions() {
+        return new int[] {super.getX(), super.getY(),
+            super.getX() + 1, super.getY(),
+            super.getX(), super.getY() + 1,
+            super.getX() + 1, super.getY() + 1};
     }
 }
