@@ -4,6 +4,7 @@ import blocks.*;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Main extends PApplet {
 
@@ -17,6 +18,7 @@ public class Main extends PApplet {
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
+    private Random rng;
 
     public static void main(String[] args) {
         PApplet.main("main.Main");
@@ -32,13 +34,8 @@ public class Main extends PApplet {
         fallSpeed = 60;
 
         blocks = new ArrayList<>();
-        blocks.add(new JBlock(4, 0, 0));
-//        blocks.add(new IBlock(8, 0, 0));
-//        blocks.add(new LBlock(12, 0, 0));
-//        blocks.add(new JBlock(16, 0, 0));
-//        blocks.add(new TBlock(20, 0, 0));
-//        blocks.add(new SBlock(24, 0, 0));
-//        blocks.add(new ZBlock(28, 0, 0));
+        rng = new Random();
+        spawnNewPiece();
     }
 
     public void draw() {
@@ -47,21 +44,24 @@ public class Main extends PApplet {
 
         displayAllBlocks(blocks);
         moveCurrentBlock(blocks.get(blocks.size() - 1), loopCounter);
-        System.out.println(fallSpeed);
     }
 
     public void keyPressed() {
         Block currentBlock = blocks.get(blocks.size() - 1);
         if (loopCounter - pressInterval > 10 && keyCode == RIGHT) {
-            currentBlock.setX(currentBlock.getX() + 1);
+            currentBlock.moveRight();
             pressInterval = loopCounter;
         } else if (loopCounter - pressInterval > 10 && keyCode == LEFT) {
-            currentBlock.setX(currentBlock.getX() - 1);
+            currentBlock.moveLeft();
             pressInterval = loopCounter;
-        } else if (keyCode == UP) {
-            currentBlock.setY(18);
         } else if (keyCode == DOWN) {
             fallSpeed = 5;
+        } else if (key == 'z') {
+            currentBlock.rotateCounterClockwise();
+        } else if (key == 'x') {
+            currentBlock.rotateClockwise();
+        } else if (key == ' ') {
+            spawnNewPiece();
         }
     }
 
@@ -72,7 +72,7 @@ public class Main extends PApplet {
     }
 
     private void displayBlock(Block b) {
-        int[] positions = b.getPositions();
+        int[] positions = b.getCoordinates();
         int[] fillColor = b.getColor();
 
         fill(fillColor[0], fillColor[1], fillColor[2]);
@@ -93,7 +93,21 @@ public class Main extends PApplet {
 
     private void moveCurrentBlock(Block b, int loopCounter) {
         if (loopCounter % fallSpeed == 0) {
-            b.move();
+            b.fall();
+        }
+    }
+
+    private void spawnNewPiece() {
+        int blockType = rng.nextInt(7);
+
+        switch (blockType) {
+            case 0: blocks.add(new IBlock()); break;
+            case 1: blocks.add(new OBlock()); break;
+            case 2: blocks.add(new JBlock()); break;
+            case 3: blocks.add(new LBlock()); break;
+            case 4: blocks.add(new SBlock()); break;
+            case 5: blocks.add(new ZBlock()); break;
+            case 6: blocks.add(new TBlock()); break;
         }
     }
 
