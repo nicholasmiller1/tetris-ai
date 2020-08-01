@@ -1,56 +1,75 @@
 package blocks;
 
+import main.Main;
+import java.util.Random;
+
 public abstract class Block {
 
-    private float x;
-    private float y;
-    private int orientation;
+    private int[] coordinates;
     private int[] color;
 
-    public static final int SQUARE_SIZE = 10;
-
-    public Block(float initX, float initY, int orientation, int[] color) {
-        this.x = initX;
-        this.y = initY;
-        this.orientation = orientation;
+    public Block(int[] coordinates, int[] color) {
+        this.coordinates = coordinates;
         this.color = color;
     }
 
-    public void move() {
-        y += 1;
+    public void fall() {
+        for (int i = 1; i < coordinates.length; i += 2) {
+            coordinates[i]++;
+        }
     }
 
-    public float getX() {
-        return x;
+    public void moveRight() {
+        for (int i = 0; i < coordinates.length; i += 2) {
+            coordinates[i]++;
+        }
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void moveLeft() {
+        for (int i = 0; i < coordinates.length; i += 2) {
+            coordinates[i]--;
+        }
     }
 
-    public float getY() {
-        return y;
+    public int[] getCoordinates() {
+        return coordinates;
     }
 
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    public int getOrientation() {
-        return orientation;
-    }
-
-    public void setOrientation(int orientation) {
-        this.orientation = orientation;
+    public void setCoordinates(int[] coordinates) {
+        this.coordinates = coordinates;
     }
 
     public int[] getColor() {
         return color;
     }
 
-    public void setColor(int[] color) {
-        this.color = color;
+    public void rotateCounterClockwise() {
+        int n = 2;
+        int xOffset = coordinates[2] - 1;
+        int yOffset = coordinates[3] - 1;
+
+        for (int i = 0; i < coordinates.length; i += 2) {
+            int x = coordinates[i] - xOffset;
+            coordinates[i] = coordinates[i+1] - yOffset;
+            coordinates[i+1] = n - x;
+
+            coordinates[i] += xOffset;
+            coordinates[i+1] += yOffset;
+        }
     }
 
-    abstract public float[] getPositions();
+    public void rotateClockwise() {
+        int n = 2;
+        int xOffset = coordinates[2] - 1;
+        int yOffset = coordinates[3] - 1;
+
+        for (int i = 0; i < coordinates.length; i += 2) {
+            int y = coordinates[i+1] - yOffset;
+            coordinates[i+1] = coordinates[i] - xOffset;
+            coordinates[i] = n - y;
+
+            coordinates[i] += xOffset;
+            coordinates[i+1] += yOffset;
+        }
+    }
 }

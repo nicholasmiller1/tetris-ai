@@ -2,18 +2,7 @@ package blocks;
 
 public class TBlock extends Block {
 
-    public TBlock(float initX, float initY, int orientation) {
-        super(initX, initY, orientation, new int[] {178, 102, 255});
-    }
-
-    public float[] getPositions() {
-        return new float[] {super.getX() - (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 1.5f),
-                super.getX() - (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() - (super.SQUARE_SIZE * 1.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() - (super.SQUARE_SIZE * 1.5f), super.getY() + (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 1.5f), super.getY() + (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 1.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 0.5f),
-                super.getX() + (super.SQUARE_SIZE * 0.5f), super.getY() - (super.SQUARE_SIZE * 1.5f)};
+    public TBlock() {
+        super(new int[] {3, 0, 4, 0, 4, -1, 5, 0}, new int[] {178, 102, 255});
     }
 }
