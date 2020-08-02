@@ -1,5 +1,7 @@
 package blocks;
 
+import main.Main;
+
 public class Block {
 
     private int[] coordinates;
@@ -12,11 +14,24 @@ public class Block {
 
     public void fall() {
         for (int i = 1; i < coordinates.length; i += 2) {
+            if (coordinates[i] >= 19) {
+                Main.spawnNewPiece();
+                return;
+            }
+        }
+
+        for (int i = 1; i < coordinates.length; i += 2) {
             coordinates[i]++;
         }
     }
 
     public void moveRight() {
+        for (int i = 0; i < coordinates.length; i += 2) {
+            if (coordinates[i] >= 9) {
+                return;
+            }
+        }
+
         for (int i = 0; i < coordinates.length; i += 2) {
             coordinates[i]++;
         }
@@ -24,6 +39,18 @@ public class Block {
 
     public void moveLeft() {
         for (int i = 0; i < coordinates.length; i += 2) {
+            if (coordinates[i] <= 0) {
+                return;
+            }
+        }
+
+        for (int i = 0; i < coordinates.length; i += 2) {
+            coordinates[i]--;
+        }
+    }
+
+    public void moveUp() {
+        for (int i = 1; i < coordinates.length; i += 2) {
             coordinates[i]--;
         }
     }
@@ -49,6 +76,8 @@ public class Block {
             coordinates[i] += xOffset;
             coordinates[i+1] += yOffset;
         }
+
+        checkBoundaryCollisions();
     }
 
     public void rotateClockwise() {
@@ -63,6 +92,20 @@ public class Block {
 
             coordinates[i] += xOffset;
             coordinates[i+1] += yOffset;
+        }
+
+        checkBoundaryCollisions();
+    }
+
+    private void checkBoundaryCollisions() {
+        for (int i = 0; i < coordinates.length; i += 2) {
+            if (coordinates[i] >= 10) {
+                moveLeft();
+            } else if (coordinates[i] < 0) {
+                moveRight();
+            } else if (coordinates[i+1] > 19) {
+                moveUp();
+            }
         }
     }
 

@@ -97,21 +97,7 @@ public class Main extends PApplet {
         }
     }
 
-    private void checkBoundaryCollisions(Block b) {
-        int[] coords = b.getCoordinates();
-        for (int i = 0; i < coords.length; i += 2) {
-            if (coords[i] < 0) {
-                b.moveRight();
-            } else if (coords[i] >= 10) {
-                b.moveLeft();
-            } else if (coords[i+1] >= 19) {
-                spawnNewPiece();
-                return;
-            }
-        }
-    }
-
-    private static void spawnNewPiece() {
+    public static void spawnNewPiece() {
         if (currentBlock != null) {
             int[] coords = currentBlock.getCoordinates();
             for (int i = 0; i < coords.length; i += 2) {
@@ -129,10 +115,14 @@ public class Main extends PApplet {
         strokeWeight(2);
         rect(STAGE_BORDERS[0], STAGE_BORDERS[1], STAGE_BORDERS[2] - STAGE_BORDERS[0], STAGE_BORDERS[3] - STAGE_BORDERS[1]);
 
-        strokeWeight(0);
         for (int r = 0; r < gameBoard.length; r++) {
             for (int c = 0; c < gameBoard[0].length; c++) {
                 fill(COLOR_VALUES[gameBoard[r][c]][0], COLOR_VALUES[gameBoard[r][c]][1], COLOR_VALUES[gameBoard[r][c]][2]);
+
+                switch (gameBoard[r][c]) {
+                    case 0 -> strokeWeight(0);
+                    default -> strokeWeight(1);
+                }
 
                 square(STAGE_BORDERS[0] + (SQUARE_SIZE * c), STAGE_BORDERS[1] + (SQUARE_SIZE * r), SQUARE_SIZE);
             }
