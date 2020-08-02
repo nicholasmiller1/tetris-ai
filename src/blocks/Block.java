@@ -1,16 +1,13 @@
 package blocks;
 
-import main.Main;
-import java.util.Random;
-
-public abstract class Block {
+public class Block {
 
     private int[] coordinates;
-    private int[] color;
+    private final int blockType;
 
-    public Block(int[] coordinates, int[] color) {
+    public Block(int[] coordinates, int blockType) {
         this.coordinates = coordinates;
-        this.color = color;
+        this.blockType = blockType;
     }
 
     public void fall() {
@@ -35,12 +32,8 @@ public abstract class Block {
         return coordinates;
     }
 
-    public void setCoordinates(int[] coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public int[] getColor() {
-        return color;
+    public int getBlockType() {
+        return blockType;
     }
 
     public void rotateCounterClockwise() {
@@ -71,5 +64,18 @@ public abstract class Block {
             coordinates[i] += xOffset;
             coordinates[i+1] += yOffset;
         }
+    }
+
+    public static Block createNewBlock(int blockType) {
+        return switch (blockType) {
+            case 1 -> new Block(new int[]{3, 0, 4, 0, 5, 0, 6, 0}, blockType);
+            case 2 -> new Block(new int[]{3, -1, 4, 0, 3, 0, 5, 0}, blockType);
+            case 3 -> new Block(new int[]{3, 0, 4, 0, 5, 0, 5, -1}, blockType);
+            case 4 -> new Block(new int[]{4, -1, 4, 0, 5, -1, 5, 0}, blockType);
+            case 5 -> new Block(new int[]{3, 0, 4, 0, 4, -1, 5, -1}, blockType);
+            case 6 -> new Block(new int[]{3, 0, 4, 0, 4, -1, 5, 0}, blockType);
+            case 7 -> new Block(new int[]{3, -1, 4, 0, 4, -1, 5, 0}, blockType);
+            default -> null;
+        };
     }
 }
