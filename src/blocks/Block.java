@@ -13,39 +13,38 @@ public class Block {
     }
 
     public void fall() {
-        for (int i = 1; i < coordinates.length; i += 2) {
-            if (coordinates[i] >= 19) {
-                Main.spawnNewPiece();
-                return;
+        if (checkCollisions("Down")) {
+            for (int i = 1; i < coordinates.length; i += 2) {
+                coordinates[i]++;
             }
-        }
-
-        for (int i = 1; i < coordinates.length; i += 2) {
-            coordinates[i]++;
+        } else {
+            Main.spawnNewPiece();
         }
     }
 
-    public void moveRight() {
-        for (int i = 0; i < coordinates.length; i += 2) {
-            if (coordinates[i] >= 9) {
-                return;
+    public void autoFall() {
+        while(checkCollisions("Down")) {
+            for (int i = 1; i < coordinates.length; i += 2) {
+                coordinates[i]++;
             }
         }
 
-        for (int i = 0; i < coordinates.length; i += 2) {
-            coordinates[i]++;
+        Main.spawnNewPiece();
+    }
+
+    public void moveRight() {
+        if (checkCollisions("Right")) {
+            for (int i = 0; i < coordinates.length; i += 2) {
+                coordinates[i]++;
+            }
         }
     }
 
     public void moveLeft() {
-        for (int i = 0; i < coordinates.length; i += 2) {
-            if (coordinates[i] <= 0) {
-                return;
+        if (checkCollisions("Left")) {
+            for (int i = 0; i < coordinates.length; i += 2) {
+                coordinates[i]--;
             }
-        }
-
-        for (int i = 0; i < coordinates.length; i += 2) {
-            coordinates[i]--;
         }
     }
 
@@ -77,7 +76,7 @@ public class Block {
             coordinates[i+1] += yOffset;
         }
 
-        checkBoundaryCollisions();
+        if ( )
     }
 
     public void rotateClockwise() {
@@ -93,20 +92,29 @@ public class Block {
             coordinates[i] += xOffset;
             coordinates[i+1] += yOffset;
         }
-
-        checkBoundaryCollisions();
     }
 
-    private void checkBoundaryCollisions() {
+    private boolean checkCollisions(String direction) {
+        int xIncrement = 0;
+        int yIncrement = 0;
+        switch (direction) {
+            case "Down" -> yIncrement = 1;
+            case "Left" -> xIncrement = -1;
+            case "Right" -> xIncrement = 1;
+        }
+
         for (int i = 0; i < coordinates.length; i += 2) {
-            if (coordinates[i] >= 10) {
-                moveLeft();
-            } else if (coordinates[i] < 0) {
-                moveRight();
-            } else if (coordinates[i+1] > 19) {
-                moveUp();
+            int testX = coordinates[i] + xIncrement;
+            int testY = coordinates[i+1] + yIncrement;
+
+            if (testX >= 10 || testX < 0 || testY >= 20) {
+                return false;
+            } else if (testY >= 0 && Main.gameBoard[coordinates[i+1] + yIncrement][coordinates[i] + xIncrement] != 0) {
+                return false;
             }
         }
+
+        return true;
     }
 
     public static Block createNewBlock(int blockType) {

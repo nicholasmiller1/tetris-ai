@@ -13,8 +13,8 @@ public class Main extends PApplet {
     private static final int[][] COLOR_VALUES = {{255, 255, 255}, {0, 255, 255}, {0, 0, 255}, {255, 128, 0}, {255, 255, 0}, {0, 255, 0}, {178, 102, 255}, {255, 0, 0}};
 
     public static final int[] STAGE_BORDERS = {300, 150, 500, 550};
+    public static int[][] gameBoard;
 
-    private static int[][] gameBoard;
     private static Block currentBlock;
     private int loopCounter;
     private int pressInterval;
@@ -62,6 +62,8 @@ public class Main extends PApplet {
             pressInterval = loopCounter;
         } else if (keyCode == DOWN) {
             fallSpeed = 5;
+        } else if (keyCode == UP) {
+            currentBlock.autoFall();
         } else if (key == 'z') {
             currentBlock.rotateCounterClockwise();
         } else if (key == 'x') {
