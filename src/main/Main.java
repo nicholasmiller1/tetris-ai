@@ -3,7 +3,7 @@ package main;
 import blocks.*;
 import processing.core.PApplet;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Main extends PApplet {
@@ -11,14 +11,16 @@ public class Main extends PApplet {
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 700;
     private static final int SQUARE_SIZE = 20;
+    private static final int[][] COLOR_VALUES = {{255, 255, 255}, {0, 255, 255}, {0, 0, 255}, {255, 128, 0}, {255, 255, 0}, {0, 255, 0}, {178, 102, 255}, {255, 0, 0}};
 
     public static final int[] STAGE_BORDERS = {300, 150, 500, 550};
+    public static int[][] gameBoard;
 
-    private ArrayList<Block> blocks;
+    private static Block currentBlock;
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
-    private Random rng;
+    private static Random rng;
 
     public static void main(String[] args) {
         PApplet.main("main.Main");
@@ -33,7 +35,13 @@ public class Main extends PApplet {
         pressInterval = 0;
         fallSpeed = 60;
 
-        blocks = new ArrayList<>();
+        gameBoard = new int[20][10];
+        for (int r = 0; r < gameBoard.length; r++) {
+            for (int c = 0; c < gameBoard[0].length; c++) {
+                gameBoard[r][c] = 0;
+            }
+        }
+
         rng = new Random();
         spawnNewPiece();
     }
@@ -42,20 +50,21 @@ public class Main extends PApplet {
         drawBackground();
         loopCounter += 1;
 
-        displayAllBlocks(blocks);
-        moveCurrentBlock(blocks.get(blocks.size() - 1), loopCounter);
+        moveCurrentBlock(currentBlock, loopCounter);
+        displayBlock(currentBlock);
     }
 
     public void keyPressed() {
-        Block currentBlock = blocks.get(blocks.size() - 1);
-        if (loopCounter - pressInterval > 10 && keyCode == RIGHT) {
+        if (loopCounter - pressInterval > 5 && keyCode == RIGHT) {
             currentBlock.moveRight();
             pressInterval = loopCounter;
-        } else if (loopCounter - pressInterval > 10 && keyCode == LEFT) {
+        } else if (loopCounter - pressInterval > 5 && keyCode == LEFT) {
             currentBlock.moveLeft();
             pressInterval = loopCounter;
         } else if (keyCode == DOWN) {
             fallSpeed = 5;
+        } else if (keyCode == UP) {
+            currentBlock.autoFall();
         } else if (key == 'z') {
             currentBlock.rotateCounterClockwise();
         } else if (key == 'x') {
@@ -73,9 +82,9 @@ public class Main extends PApplet {
 
     private void displayBlock(Block b) {
         int[] positions = b.getCoordinates();
-        int[] fillColor = b.getColor();
+        int blockType = b.getBlockType();
 
-        fill(fillColor[0], fillColor[1], fillColor[2]);
+        fill(COLOR_VALUES[blockType][0], COLOR_VALUES[blockType][1], COLOR_VALUES[blockType][2]);
         strokeWeight(1);
 
         for (int i = 0; i < positions.length; i += 2) {
@@ -85,30 +94,22 @@ public class Main extends PApplet {
         }
     }
 
-    private void displayAllBlocks(ArrayList<Block> blocks) {
-        for (Block b : blocks) {
-            displayBlock(b);
-        }
-    }
-
     private void moveCurrentBlock(Block b, int loopCounter) {
         if (loopCounter % fallSpeed == 0) {
             b.fall();
         }
     }
 
-    private void spawnNewPiece() {
-        int blockType = rng.nextInt(7);
-
-        switch (blockType) {
-            case 0: blocks.add(new IBlock()); break;
-            case 1: blocks.add(new OBlock()); break;
-            case 2: blocks.add(new JBlock()); break;
-            case 3: blocks.add(new LBlock()); break;
-            case 4: blocks.add(new SBlock()); break;
-            case 5: blocks.add(new ZBlock()); break;
-            case 6: blocks.add(new TBlock()); break;
+    public static void spawnNewPiece() {
+        if (currentBlock != null) {
+            int[] coords = currentBlock.getCoordinates();
+            for (int i = 0; i < coords.length; i += 2) {
+                gameBoard[coords[i+1]][coords[i]] = currentBlock.getBlockType();
+            }
         }
+
+        int blockType = rng.nextInt(7) + 1;
+        currentBlock = Block.createNewBlock(blockType);
     }
 
     private void drawBackground() {
@@ -117,13 +118,17 @@ public class Main extends PApplet {
         strokeWeight(2);
         rect(STAGE_BORDERS[0], STAGE_BORDERS[1], STAGE_BORDERS[2] - STAGE_BORDERS[0], STAGE_BORDERS[3] - STAGE_BORDERS[1]);
 
-        strokeWeight(0);
-        for (int i = STAGE_BORDERS[0]; i < STAGE_BORDERS[2]; i += SQUARE_SIZE) {
-            line(i, STAGE_BORDERS[1], i, STAGE_BORDERS[3]);
-        }
+        for (int r = 0; r < gameBoard.length; r++) {
+            for (int c = 0; c < gameBoard[0].length; c++) {
+                fill(COLOR_VALUES[gameBoard[r][c]][0], COLOR_VALUES[gameBoard[r][c]][1], COLOR_VALUES[gameBoard[r][c]][2]);
 
-        for (int i = STAGE_BORDERS[1]; i < STAGE_BORDERS[3]; i += SQUARE_SIZE) {
-            line(STAGE_BORDERS[0], i, STAGE_BORDERS[2], i);
+                switch (gameBoard[r][c]) {
+                    case 0 -> strokeWeight(0);
+                    default -> strokeWeight(1);
+                }
+
+                square(STAGE_BORDERS[0] + (SQUARE_SIZE * c), STAGE_BORDERS[1] + (SQUARE_SIZE * r), SQUARE_SIZE);
+            }
         }
     }
 }
