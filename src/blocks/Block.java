@@ -1,6 +1,6 @@
 package blocks;
 
-import main.Main;
+import main.GameBoard;
 
 public class Block {
 
@@ -32,7 +32,7 @@ public class Block {
             }
             boundingBoxCorner[1]++;
         } else {
-            Main.spawnNewPiece();
+            GameBoard.spawnNewPiece();
         }
     }
 
@@ -43,7 +43,7 @@ public class Block {
             }
         }
 
-        Main.spawnNewPiece();
+        GameBoard.spawnNewPiece();
     }
 
     public void moveRight() {
@@ -109,7 +109,7 @@ public class Block {
 
             if (testX >= 10 || testX < 0 || testY >= 20) {
                 return false;
-            } else if (testY >= 0 && Main.gameBoard[coordinates[i+1] + yIncrement][coordinates[i] + xIncrement] != 0) {
+            } else if (testY >= 0 && GameBoard.gameBoard[coordinates[i+1] + yIncrement][coordinates[i] + xIncrement] != 0) {
                 return false;
             }
         }
