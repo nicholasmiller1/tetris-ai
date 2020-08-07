@@ -46,6 +46,7 @@ public class GameBoard extends PApplet {
     }
 
     public void draw() {
+        checkLineClears();
         drawBackground();
         loopCounter += 1;
 
@@ -117,6 +118,33 @@ public class GameBoard extends PApplet {
         currentBlock = Block.createNewBlock(blockBag.pop());
     }
 
+    private void checkLineClears() {
+        for (int r = 0; r < gameBoard.length; r++) {
+            int lineBlocks = 0;
+            for (int c = 0; c < gameBoard[0].length; c++) {
+                if (gameBoard[r][c] != 0) {
+                    lineBlocks++;
+                }
+            }
+
+            if (lineBlocks == gameBoard[0].length) {
+                removeLine(r);
+            }
+        }
+    }
+
+    private void removeLine(int index) {
+        for (int r = index; r > 0; r--) {
+            for (int c = 0; c < gameBoard[0].length; c++) {
+                gameBoard[r][c] = gameBoard[r-1][c];
+            }
+        }
+
+        for (int c = 0; c < gameBoard[0].length; c++) {
+            gameBoard[0][c] = 0;
+        }
+    }
+
     private void drawBackground() {
         background(150);
         fill(255);
@@ -127,9 +155,10 @@ public class GameBoard extends PApplet {
             for (int c = 0; c < gameBoard[0].length; c++) {
                 fill(COLOR_VALUES[gameBoard[r][c]][0], COLOR_VALUES[gameBoard[r][c]][1], COLOR_VALUES[gameBoard[r][c]][2]);
 
-                switch (gameBoard[r][c]) {
-                    case 0 -> strokeWeight(0);
-                    default -> strokeWeight(1);
+                if (gameBoard[r][c] == 0) {
+                    strokeWeight(0);
+                } else {
+                    strokeWeight(1);
                 }
 
                 square(STAGE_BORDERS[0] + (SQUARE_SIZE * c), STAGE_BORDERS[1] + (SQUARE_SIZE * r), SQUARE_SIZE);
