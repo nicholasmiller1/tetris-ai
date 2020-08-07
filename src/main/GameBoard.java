@@ -3,10 +3,9 @@ package main;
 import blocks.*;
 import processing.core.PApplet;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
-public class Main extends PApplet {
+public class GameBoard extends PApplet {
 
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 700;
@@ -17,13 +16,13 @@ public class Main extends PApplet {
     public static int[][] gameBoard;
 
     private static Block currentBlock;
+    private static Stack<Integer> blockBag;
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
-    private static Random rng;
 
     public static void main(String[] args) {
-        PApplet.main("main.Main");
+        PApplet.main("main.GameBoard");
     }
 
     public void settings() {
@@ -34,6 +33,7 @@ public class Main extends PApplet {
         loopCounter = 0;
         pressInterval = 0;
         fallSpeed = 60;
+        blockBag = new Stack<>();
 
         gameBoard = new int[20][10];
         for (int r = 0; r < gameBoard.length; r++) {
@@ -42,7 +42,6 @@ public class Main extends PApplet {
             }
         }
 
-        rng = new Random();
         spawnNewPiece();
     }
 
@@ -55,10 +54,10 @@ public class Main extends PApplet {
     }
 
     public void keyPressed() {
-        if (loopCounter - pressInterval > 5 && keyCode == RIGHT) {
+        if (loopCounter - pressInterval > 2 && keyCode == RIGHT) {
             currentBlock.moveRight();
             pressInterval = loopCounter;
-        } else if (loopCounter - pressInterval > 5 && keyCode == LEFT) {
+        } else if (loopCounter - pressInterval > 2 && keyCode == LEFT) {
             currentBlock.moveLeft();
             pressInterval = loopCounter;
         } else if (keyCode == DOWN) {
@@ -108,8 +107,14 @@ public class Main extends PApplet {
             }
         }
 
-        int blockType = rng.nextInt(7) + 1;
-        currentBlock = Block.createNewBlock(blockType);
+        if (blockBag.isEmpty()) {
+            for (int i = 1; i <= 7; i++) {
+                blockBag.push(i);
+            }
+            Collections.shuffle(blockBag);
+        }
+
+        currentBlock = Block.createNewBlock(blockBag.pop());
     }
 
     private void drawBackground() {
