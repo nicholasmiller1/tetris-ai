@@ -6,10 +6,23 @@ public class Block {
 
     private int[] coordinates;
     private final int blockType;
+    private int boundingBoxSize;
+    private int[] boundingBoxCorner;
 
     public Block(int[] coordinates, int blockType) {
         this.coordinates = coordinates;
         this.blockType = blockType;
+
+        if (blockType == 1) {
+            this.boundingBoxSize = 3;
+            this.boundingBoxCorner = new int[] {3, -1};
+        } else if (blockType == 4) {
+            this.boundingBoxSize = 1;
+            this.boundingBoxCorner = new int[] {4, -1};
+        } else {
+            this.boundingBoxSize = 2;
+            this.boundingBoxCorner = new int[] {3, -1};
+        }
     }
 
     public void fall() {
@@ -17,6 +30,7 @@ public class Block {
             for (int i = 1; i < coordinates.length; i += 2) {
                 coordinates[i]++;
             }
+            boundingBoxCorner[1]++;
         } else {
             Main.spawnNewPiece();
         }
@@ -37,6 +51,7 @@ public class Block {
             for (int i = 0; i < coordinates.length; i += 2) {
                 coordinates[i]++;
             }
+            boundingBoxCorner[0]++;
         }
     }
 
@@ -45,12 +60,7 @@ public class Block {
             for (int i = 0; i < coordinates.length; i += 2) {
                 coordinates[i]--;
             }
-        }
-    }
-
-    public void moveUp() {
-        for (int i = 1; i < coordinates.length; i += 2) {
-            coordinates[i]--;
+            boundingBoxCorner[0]--;
         }
     }
 
@@ -63,34 +73,24 @@ public class Block {
     }
 
     public void rotateCounterClockwise() {
-        int n = 2;
-        int xOffset = coordinates[2] - 1;
-        int yOffset = coordinates[3] - 1;
-
         for (int i = 0; i < coordinates.length; i += 2) {
-            int x = coordinates[i] - xOffset;
-            coordinates[i] = coordinates[i+1] - yOffset;
-            coordinates[i+1] = n - x;
+            int x = coordinates[i] - boundingBoxCorner[0];
+            coordinates[i] = coordinates[i+1] - boundingBoxCorner[1];
+            coordinates[i+1] = boundingBoxSize - x;
 
-            coordinates[i] += xOffset;
-            coordinates[i+1] += yOffset;
+            coordinates[i] += boundingBoxCorner[0];
+            coordinates[i+1] += boundingBoxCorner[1];
         }
-
-        if ( )
     }
 
     public void rotateClockwise() {
-        int n = 2;
-        int xOffset = coordinates[2] - 1;
-        int yOffset = coordinates[3] - 1;
-
         for (int i = 0; i < coordinates.length; i += 2) {
-            int y = coordinates[i+1] - yOffset;
-            coordinates[i+1] = coordinates[i] - xOffset;
-            coordinates[i] = n - y;
+            int y = coordinates[i+1] - boundingBoxCorner[1];
+            coordinates[i+1] = coordinates[i] - boundingBoxCorner[0];
+            coordinates[i] = boundingBoxSize - y;
 
-            coordinates[i] += xOffset;
-            coordinates[i+1] += yOffset;
+            coordinates[i] += boundingBoxCorner[0];
+            coordinates[i+1] += boundingBoxCorner[1];
         }
     }
 
@@ -117,6 +117,8 @@ public class Block {
         return true;
     }
 
+
+    // 1 -> IBlock | 2 -> JBlock | 3 -> LBlock | 4 -> OBlock | 5 -> SBlock | 6 -> TBlock | 7 -> ZBlock
     public static Block createNewBlock(int blockType) {
         return switch (blockType) {
             case 1 -> new Block(new int[]{3, 0, 4, 0, 5, 0, 6, 0}, blockType);
