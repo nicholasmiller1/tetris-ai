@@ -8,20 +8,42 @@ public class Block {
     private final int blockType;
     private final int boundingBoxSize;
     private final int[] boundingBoxCorner;
+    private int rotationState;
+    private final int[][][] walkKickTransformations;
 
     public Block(int[] coordinates, int blockType) {
         this.coordinates = coordinates;
         this.blockType = blockType;
+        this.rotationState = 0;
 
         if (blockType == 1) {
             this.boundingBoxSize = 3;
             this.boundingBoxCorner = new int[] {3, -1};
+            this.walkKickTransformations = new int[][][] {
+                    {{0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1, -2}},
+                    {{0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1,2}},
+                    {{0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2,1}},
+                    {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2,-1}},
+                    {{0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1,2}},
+                    {{0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1,-2}},
+                    {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2,-1}},
+                    {{0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2,1}}};
         } else if (blockType == 4) {
             this.boundingBoxSize = 1;
             this.boundingBoxCorner = new int[] {4, -1};
+            this.walkKickTransformations = null;
         } else {
             this.boundingBoxSize = 2;
             this.boundingBoxCorner = new int[] {3, -1};
+            this.walkKickTransformations = new int[][][] {
+                    {{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}},
+                    {{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1,-2}},
+                    {{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1,-2}},
+                    {{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1,2}},
+                    {{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1,2}},
+                    {{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1,-2}},
+                    {{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1,-2}},
+                    {{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1,2}}};
         }
     }
 
@@ -73,6 +95,8 @@ public class Block {
     }
 
     public void rotateCounterClockwise() {
+        int[] resetCoordinates = coordinates;
+
         for (int i = 0; i < coordinates.length; i += 2) {
             int x = coordinates[i] - boundingBoxCorner[0];
             coordinates[i] = coordinates[i+1] - boundingBoxCorner[1];
@@ -80,6 +104,16 @@ public class Block {
 
             coordinates[i] += boundingBoxCorner[0];
             coordinates[i+1] += boundingBoxCorner[1];
+        }
+
+//        for (int i = 0; i < walkKickTransformations[0].length; i++) {
+//
+//        }
+
+        if (rotationState > 0) {
+            rotationState--;
+        } else {
+            rotationState = 3;
         }
     }
 
@@ -91,6 +125,12 @@ public class Block {
 
             coordinates[i] += boundingBoxCorner[0];
             coordinates[i+1] += boundingBoxCorner[1];
+        }
+
+        if (rotationState < 3) {
+            rotationState++;
+        } else {
+            rotationState = 0;
         }
     }
 
