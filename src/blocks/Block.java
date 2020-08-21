@@ -4,40 +4,57 @@ import main.GameBoard;
 
 public class Block {
 
-    private final int[] coordinates;
+    private int[] coordinates;
     private final int blockType;
     private final int boundingBoxSize;
     private final int[] boundingBoxCorner;
+    private int rotationState;
+    private final int[][][] walkKickTransformations;
 
     public Block(int[] coordinates, int blockType) {
         this.coordinates = coordinates;
         this.blockType = blockType;
+        this.rotationState = 0;
 
         if (blockType == 1) {
             this.boundingBoxSize = 3;
             this.boundingBoxCorner = new int[] {3, -1};
+            this.walkKickTransformations = new int[][][] {
+                    {{0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1, -2}}, // 0 -> 1
+                    {{0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2,1}}, // 1 -> 2
+                    {{0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1,2}}, // 2 -> 3
+                    {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2,-1}}, // 3 -> 0
+                    {{0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1,-2}}, // 3 -> 2
+                    {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2,-1}}, // 2 -> 1
+                    {{0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1,2}}, // 1 -> 0
+                    {{0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2,1}}}; // 0 -> 3
         } else if (blockType == 4) {
             this.boundingBoxSize = 1;
             this.boundingBoxCorner = new int[] {4, -1};
+            this.walkKickTransformations = null;
         } else {
             this.boundingBoxSize = 2;
             this.boundingBoxCorner = new int[] {3, -1};
+            this.walkKickTransformations = new int[][][] {
+                    {{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}}, // 0 -> 1
+                    {{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1,-2}}, // 1 -> 2
+                    {{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1,2}}, // 2 -> 3
+                    {{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1,-2}}, // 3 -> 0
+                    {{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1,-2}}, // 3 -> 2
+                    {{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1,2}}, // 2 -> 1
+                    {{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1,-2}}, // 1 -> 0
+                    {{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1,2}}}; // 0 -> 3
         }
     }
 
     public void fall() {
-        if (checkCollisions("Down")) {
-            for (int i = 1; i < coordinates.length; i += 2) {
-                coordinates[i]++;
-            }
-            boundingBoxCorner[1]++;
-        } else {
+        if (!move(0, 1)) {
             GameBoard.spawnNewPiece();
         }
     }
 
     public void autoFall() {
-        while(checkCollisions("Down")) {
+        while(checkCollisions(0, 1)) {
             for (int i = 1; i < coordinates.length; i += 2) {
                 coordinates[i]++;
             }
@@ -46,22 +63,19 @@ public class Block {
         GameBoard.spawnNewPiece();
     }
 
-    public void moveRight() {
-        if (checkCollisions("Right")) {
-            for (int i = 0; i < coordinates.length; i += 2) {
-                coordinates[i]++;
+    public boolean move(int xIncrement, int yIncrement) {
+        if (checkCollisions(xIncrement, yIncrement)) {
+            for (int i = 0; i < coordinates.length; i+=2) {
+                coordinates[i] += xIncrement;
+                coordinates[i+1] += yIncrement;
             }
-            boundingBoxCorner[0]++;
-        }
-    }
+            boundingBoxCorner[0] += xIncrement;
+            boundingBoxCorner[1] += yIncrement;
 
-    public void moveLeft() {
-        if (checkCollisions("Left")) {
-            for (int i = 0; i < coordinates.length; i += 2) {
-                coordinates[i]--;
-            }
-            boundingBoxCorner[0]--;
+            return true;
         }
+
+        return false;
     }
 
     public int[] getCoordinates() {
@@ -73,6 +87,8 @@ public class Block {
     }
 
     public void rotateCounterClockwise() {
+        int[] resetCoordinates = coordinates;
+
         for (int i = 0; i < coordinates.length; i += 2) {
             int x = coordinates[i] - boundingBoxCorner[0];
             coordinates[i] = coordinates[i+1] - boundingBoxCorner[1];
@@ -81,9 +97,27 @@ public class Block {
             coordinates[i] += boundingBoxCorner[0];
             coordinates[i+1] += boundingBoxCorner[1];
         }
+
+        if (walkKickTransformations != null) {
+            for (int i = 0; i < walkKickTransformations[0].length; i++) {
+                if(move(walkKickTransformations[7-rotationState][i][0], walkKickTransformations[7-rotationState][i][1])) {
+                    if (rotationState > 0) {
+                        rotationState--;
+                    } else {
+                        rotationState = 3;
+                    }
+                    return;
+                }
+            }
+
+
+            this.coordinates = resetCoordinates;
+        }
     }
 
     public void rotateClockwise() {
+        int[] resetCoordinates = coordinates;
+
         for (int i = 0; i < coordinates.length; i += 2) {
             int y = coordinates[i+1] - boundingBoxCorner[1];
             coordinates[i+1] = coordinates[i] - boundingBoxCorner[0];
@@ -92,17 +126,25 @@ public class Block {
             coordinates[i] += boundingBoxCorner[0];
             coordinates[i+1] += boundingBoxCorner[1];
         }
+
+        if (walkKickTransformations != null) {
+            for (int i = 0; i < walkKickTransformations[0].length; i++) {
+                if(move(walkKickTransformations[rotationState][i][0], walkKickTransformations[rotationState][i][1])) {
+                    if (rotationState < 3) {
+                        rotationState++;
+                    } else {
+                        rotationState = 0;
+                    }
+                    return;
+                }
+            }
+
+
+            this.coordinates = resetCoordinates;
+        }
     }
 
-    private boolean checkCollisions(String direction) {
-        int xIncrement = 0;
-        int yIncrement = 0;
-        switch (direction) {
-            case "Down" -> yIncrement = 1;
-            case "Left" -> xIncrement = -1;
-            case "Right" -> xIncrement = 1;
-        }
-
+    private boolean checkCollisions(int xIncrement, int yIncrement) {
         for (int i = 0; i < coordinates.length; i += 2) {
             int testX = coordinates[i] + xIncrement;
             int testY = coordinates[i+1] + yIncrement;

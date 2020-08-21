@@ -58,10 +58,10 @@ public class GameBoard extends PApplet {
 
     public void keyPressed() {
         if (loopCounter - pressInterval > 2 && keyCode == RIGHT) {
-            currentBlock.moveRight();
+            currentBlock.move(1,0);
             pressInterval = loopCounter;
         } else if (loopCounter - pressInterval > 2 && keyCode == LEFT) {
-            currentBlock.moveLeft();
+            currentBlock.move(-1,0);
             pressInterval = loopCounter;
         } else if (keyCode == DOWN) {
             fallSpeed = 5;
@@ -149,14 +149,10 @@ public class GameBoard extends PApplet {
 
     private void removeLine(int index) {
         for (int r = index; r > 0; r--) {
-            for (int c = 0; c < gameBoard[0].length; c++) {
-                gameBoard[r][c] = gameBoard[r-1][c];
-            }
+            System.arraycopy(gameBoard[r - 1], 0, gameBoard[r], 0, gameBoard[0].length);
         }
 
-        for (int c = 0; c < gameBoard[0].length; c++) {
-            gameBoard[0][c] = 0;
-        }
+        Arrays.fill(gameBoard[0], 0);
 
         lineClears++;
     }
@@ -182,7 +178,7 @@ public class GameBoard extends PApplet {
         }
 
         fill(0);
-        text("Line Clears: " + lineClears, SCREEN_WIDTH/2 - 35, STAGE_BORDERS[1] - 15);
+        text("Line Clears: " + lineClears, SCREEN_WIDTH/2.0f - 35, STAGE_BORDERS[1] - 15);
     }
 }
 
