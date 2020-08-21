@@ -1,6 +1,6 @@
-package blocks;
+package Game.blocks;
 
-import main.GameBoard;
+import Game.GameBoard;
 
 public class Block {
 

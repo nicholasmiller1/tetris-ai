@@ -1,6 +1,6 @@
-package main;
+package Game;
 
-import blocks.*;
+import Game.blocks.*;
 import processing.core.PApplet;
 
 import java.util.*;
