@@ -11,12 +11,13 @@ public class GameBoard extends PApplet {
     private static final int SCREEN_HEIGHT = 700;
     private static final int SQUARE_SIZE = 20;
     private static final int[][] COLOR_VALUES = {{255, 255, 255}, {0, 255, 255}, {0, 0, 255}, {255, 128, 0}, {255, 255, 0}, {0, 255, 0}, {178, 102, 255}, {255, 0, 0}};
-
     public static final int[] STAGE_BORDERS = {300, 150, 500, 550};
-    public static int[][] gameBoard;
 
+    public static int[][] gameBoard;
     private static Block currentBlock;
+    private int heldBlockType;
     private static Stack<Integer> blockBag;
+    private int lineClears;
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
@@ -33,6 +34,7 @@ public class GameBoard extends PApplet {
         loopCounter = 0;
         pressInterval = 0;
         fallSpeed = 60;
+        heldBlockType = 0;
         blockBag = new Stack<>();
 
         gameBoard = new int[20][10];
@@ -46,6 +48,7 @@ public class GameBoard extends PApplet {
     }
 
     public void draw() {
+        checkLineClears();
         drawBackground();
         loopCounter += 1;
 
@@ -69,7 +72,7 @@ public class GameBoard extends PApplet {
         } else if (key == 'x') {
             currentBlock.rotateClockwise();
         } else if (key == ' ') {
-            spawnNewPiece();
+            holdBlock();
         }
     }
 
@@ -117,24 +120,69 @@ public class GameBoard extends PApplet {
         currentBlock = Block.createNewBlock(blockBag.pop());
     }
 
+    private void holdBlock() {
+        if (heldBlockType == 0) {
+            heldBlockType = currentBlock.getBlockType();
+            currentBlock = null;
+            spawnNewPiece();
+        } else {
+            int temp = heldBlockType;
+            heldBlockType = currentBlock.getBlockType();
+            currentBlock = Block.createNewBlock(temp);
+        }
+    }
+
+    private void checkLineClears() {
+        for (int r = 0; r < gameBoard.length; r++) {
+            int lineBlocks = 0;
+            for (int c = 0; c < gameBoard[0].length; c++) {
+                if (gameBoard[r][c] != 0) {
+                    lineBlocks++;
+                }
+            }
+
+            if (lineBlocks == gameBoard[0].length) {
+                removeLine(r);
+            }
+        }
+    }
+
+    private void removeLine(int index) {
+        for (int r = index; r > 0; r--) {
+            for (int c = 0; c < gameBoard[0].length; c++) {
+                gameBoard[r][c] = gameBoard[r-1][c];
+            }
+        }
+
+        for (int c = 0; c < gameBoard[0].length; c++) {
+            gameBoard[0][c] = 0;
+        }
+
+        lineClears++;
+    }
+
     private void drawBackground() {
         background(150);
         fill(255);
-        strokeWeight(2);
+        strokeWeight(3);
         rect(STAGE_BORDERS[0], STAGE_BORDERS[1], STAGE_BORDERS[2] - STAGE_BORDERS[0], STAGE_BORDERS[3] - STAGE_BORDERS[1]);
 
         for (int r = 0; r < gameBoard.length; r++) {
             for (int c = 0; c < gameBoard[0].length; c++) {
                 fill(COLOR_VALUES[gameBoard[r][c]][0], COLOR_VALUES[gameBoard[r][c]][1], COLOR_VALUES[gameBoard[r][c]][2]);
 
-                switch (gameBoard[r][c]) {
-                    case 0 -> strokeWeight(0);
-                    default -> strokeWeight(1);
+                if (gameBoard[r][c] == 0) {
+                    strokeWeight(0);
+                } else {
+                    strokeWeight(1);
                 }
 
                 square(STAGE_BORDERS[0] + (SQUARE_SIZE * c), STAGE_BORDERS[1] + (SQUARE_SIZE * r), SQUARE_SIZE);
             }
         }
+
+        fill(0);
+        text("Line Clears: " + lineClears, SCREEN_WIDTH/2 - 35, STAGE_BORDERS[1] - 15);
     }
 }
 

@@ -4,10 +4,10 @@ import main.GameBoard;
 
 public class Block {
 
-    private int[] coordinates;
+    private final int[] coordinates;
     private final int blockType;
-    private int boundingBoxSize;
-    private int[] boundingBoxCorner;
+    private final int boundingBoxSize;
+    private final int[] boundingBoxCorner;
 
     public Block(int[] coordinates, int blockType) {
         this.coordinates = coordinates;
