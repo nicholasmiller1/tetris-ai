@@ -14,16 +14,18 @@ public class GameBoard extends PApplet {
     public static final int[] STAGE_BORDERS = {300, 150, 500, 550};
 
     public static int[][] gameBoard;
-    private static Block currentBlock;
+    private Block currentBlock;
     private int heldBlockType;
-    private static Stack<Integer> blockBag;
+    private Stack<Integer> blockBag;
     private int lineClears;
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
 
     public static void main(String[] args) {
-        PApplet.main("main.GameBoard");
+        String[] processingArgs = {"Game.GameBoard"};
+        GameBoard game = new GameBoard();
+        PApplet.runSketch(processingArgs, game);
     }
 
     public void settings() {
@@ -67,6 +69,7 @@ public class GameBoard extends PApplet {
             fallSpeed = 5;
         } else if (keyCode == UP) {
             currentBlock.autoFall();
+            spawnNewPiece();
         } else if (key == 'z') {
             currentBlock.rotateCounterClockwise();
         } else if (key == 'x') {
@@ -98,11 +101,13 @@ public class GameBoard extends PApplet {
 
     private void moveCurrentBlock(Block b, int loopCounter) {
         if (loopCounter % fallSpeed == 0) {
-            b.fall();
+            if(!b.move(0, 1)) {
+                spawnNewPiece();
+            }
         }
     }
 
-    public static void spawnNewPiece() {
+    public void spawnNewPiece() {
         if (currentBlock != null) {
             int[] coords = currentBlock.getCoordinates();
             for (int i = 0; i < coords.length; i += 2) {

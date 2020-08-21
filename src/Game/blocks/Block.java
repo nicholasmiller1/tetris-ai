@@ -47,20 +47,12 @@ public class Block {
         }
     }
 
-    public void fall() {
-        if (!move(0, 1)) {
-            GameBoard.spawnNewPiece();
-        }
-    }
-
     public void autoFall() {
         while(checkCollisions(0, 1)) {
             for (int i = 1; i < coordinates.length; i += 2) {
                 coordinates[i]++;
             }
         }
-
-        GameBoard.spawnNewPiece();
     }
 
     public boolean move(int xIncrement, int yIncrement) {
