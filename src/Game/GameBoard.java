@@ -3,6 +3,7 @@ package Game;
 import Game.blocks.*;
 import processing.core.PApplet;
 
+import java.awt.event.KeyEvent;
 import java.util.*;
 
 public class GameBoard extends PApplet {
@@ -21,7 +22,7 @@ public class GameBoard extends PApplet {
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
-    private int inputCounter;
+    private boolean started = false;
 
     public static void main(String[] args) {
         String[] processingArgs = {"Game.GameBoard"};
@@ -38,7 +39,6 @@ public class GameBoard extends PApplet {
         pressInterval = 0;
         fallSpeed = 60;
         heldBlockType = 0;
-        inputCounter = 0;
         blockBag = new Stack<>();
 
         gameBoard = new int[20][10];
@@ -49,6 +49,7 @@ public class GameBoard extends PApplet {
         }
 
         spawnNewPiece();
+        updateStarted();
     }
 
     public void draw() {
@@ -61,36 +62,33 @@ public class GameBoard extends PApplet {
     }
 
     public void keyPressed() {
-        if (loopCounter - pressInterval > 2 && keyCode == RIGHT) {
+        processInput(keyCode);
+    }
+
+    public void processInput(int code) {
+        if (loopCounter - pressInterval > 2 && code == KeyEvent.VK_RIGHT) {
             currentBlock.move(1,0);
             pressInterval = loopCounter;
-            inputCounter++;
             System.out.println("Right");
-        } else if (loopCounter - pressInterval > 2 && keyCode == LEFT) {
+        } else if (loopCounter - pressInterval > 2 && code == KeyEvent.VK_LEFT) {
             currentBlock.move(-1,0);
             pressInterval = loopCounter;
-            inputCounter++;
             System.out.println("Left");
-        } else if (keyCode == DOWN) {
+        } else if (code == KeyEvent.VK_DOWN) {
             fallSpeed = 5;
-            inputCounter++;
             System.out.println("Fall");
-        } else if (keyCode == UP) {
+        } else if (code == KeyEvent.VK_UP) {
             currentBlock.autoFall();
-            inputCounter++;
             spawnNewPiece();
             System.out.println("Drop");
-        } else if (key == 'z') {
+        } else if (code == KeyEvent.VK_Z) {
             currentBlock.rotateCounterClockwise();
-            inputCounter++;
             System.out.println("CounterClockwise");
-        } else if (key == 'x') {
+        } else if (code == KeyEvent.VK_X) {
             currentBlock.rotateClockwise();
-            inputCounter++;
             System.out.println("Clockwise");
-        } else if (key == ' ') {
+        } else if (code == KeyEvent.VK_SPACE) {
             holdBlock();
-            inputCounter++;
             System.out.println("Hold");
         }
     }
@@ -123,7 +121,7 @@ public class GameBoard extends PApplet {
         }
     }
 
-    public void spawnNewPiece() {
+    private void spawnNewPiece() {
         if (currentBlock != null) {
             int[] coords = currentBlock.getCoordinates();
             for (int i = 0; i < coords.length; i += 2) {
@@ -202,8 +200,16 @@ public class GameBoard extends PApplet {
         text("Line Clears: " + lineClears, SCREEN_WIDTH/2.0f - 35, STAGE_BORDERS[1] - 15);
     }
 
-    public int getInputCounter() {
-        return inputCounter;
+    private void updateStarted() {
+        started = true;
+    }
+
+    public boolean checkStarted() {
+        return started;
+    }
+
+    public Block getCurrentBlock() {
+        return currentBlock;
     }
 }
 
