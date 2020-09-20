@@ -1,13 +1,13 @@
 package Ai;
 
+import Ai.pathfinding.Pathfinder;
+import Ai.pathfinding.Position;
+import Ai.pathfinding.generics.Scorer;
 import Game.GameBoard;
 import processing.core.PApplet;
 
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,16 +18,21 @@ public class AiMain {
 
     private static GameBoard game;
     private static Queue<String> inputQueue;
+    private static Pathfinder pathfinder;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         setupEnvironment();
 
-        runProgram();
+//        runProgram();
+
+        pathfinder = new Pathfinder();
+        List<Position> path = pathfinder.findRoute(new Position(5, 1), new Position(1, 9));
+        System.out.println(path);
     }
 
     private static void runProgram() {
         final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(AiMain::pressNextKey, 2000, 500, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(AiMain::pressNextKey, 1000, 300, TimeUnit.MILLISECONDS);
     }
 
     private static void setupEnvironment() {

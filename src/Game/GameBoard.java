@@ -22,7 +22,6 @@ public class GameBoard extends PApplet {
     private int loopCounter;
     private int pressInterval;
     private int fallSpeed;
-    private boolean started = false;
 
     public static void main(String[] args) {
         String[] processingArgs = {"Game.GameBoard"};
@@ -49,7 +48,6 @@ public class GameBoard extends PApplet {
         }
 
         spawnNewPiece();
-        updateStarted();
     }
 
     public void draw() {
@@ -198,18 +196,6 @@ public class GameBoard extends PApplet {
 
         fill(0);
         text("Line Clears: " + lineClears, SCREEN_WIDTH/2.0f - 35, STAGE_BORDERS[1] - 15);
-    }
-
-    private void updateStarted() {
-        started = true;
-    }
-
-    public boolean checkStarted() {
-        return started;
-    }
-
-    public Block getCurrentBlock() {
-        return currentBlock;
     }
 }
 
