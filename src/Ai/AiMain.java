@@ -25,8 +25,8 @@ public class AiMain {
 
 //        runProgram();
 
-        pathfinder = new Pathfinder();
-        List<Position> path = pathfinder.findRoute(new Position(5, 1), new Position(1, 9));
+        pathfinder = new Pathfinder(GameBoard.gameBoard);
+        List<Position> path = pathfinder.findRoute(new Position(5, 1, 0), new Position(1, 9, 0));
         System.out.println(path);
     }
 

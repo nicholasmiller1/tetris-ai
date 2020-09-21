@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Graph<T extends GraphNode> {
-    private Set<T> nodes;
-    private Map<String, Set<String>> connections;
+    private final Set<T> nodes;
+    private final Map<String, Set<String>> connections;
 
     public Graph(Set<T> nodes) {
         this.nodes = nodes;
@@ -35,16 +35,8 @@ public class Graph<T extends GraphNode> {
         return nodes;
     }
 
-    public void setNodes(Set<T> nodes) {
-        this.nodes = nodes;
-    }
-
     public Map<String, Set<String>> getConnections() {
         return connections;
-    }
-
-    public void setConnections(Map<String, Set<String>> connections) {
-        this.connections = connections;
     }
 
     @Override

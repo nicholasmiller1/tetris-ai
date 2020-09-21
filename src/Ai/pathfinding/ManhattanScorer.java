@@ -7,6 +7,7 @@ public class ManhattanScorer implements Scorer<Position> {
     @Override
     public double computeCost(Position from, Position to) {
         return Math.abs(from.getX() - to.getX()) +
-                Math.abs(from.getY() - to.getY());
+                Math.abs(from.getY() - to.getY()) +
+                Math.abs(from.getOrientation() - to.getOrientation());
     }
 }

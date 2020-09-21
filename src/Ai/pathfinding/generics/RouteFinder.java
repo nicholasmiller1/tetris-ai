@@ -3,7 +3,7 @@ package Ai.pathfinding.generics;
 import java.util.*;
 
 public class RouteFinder<T extends GraphNode> {
-    private final Graph<T> graph;
+    private Graph<T> graph;
     private final Scorer<T> nextNodeScorer;
     private final Scorer<T> targetScorer;
 
@@ -53,6 +53,10 @@ public class RouteFinder<T extends GraphNode> {
 
     public Graph<T> getGraph() {
         return graph;
+    }
+
+    public void setGraph(Graph<T> graph) {
+        this.graph = graph;
     }
 
     @Override
