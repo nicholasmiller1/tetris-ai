@@ -64,30 +64,27 @@ public class GameBoard extends PApplet {
     }
 
     public void processInput(int code) {
-        if (loopCounter - pressInterval > 2 && code == KeyEvent.VK_RIGHT) {
+        if (code == KeyEvent.VK_RIGHT) {
             currentBlock.move(1,0);
-            pressInterval = loopCounter;
             System.out.println("Right");
-        } else if (loopCounter - pressInterval > 2 && code == KeyEvent.VK_LEFT) {
+        } else if (code == KeyEvent.VK_LEFT) {
             currentBlock.move(-1,0);
-            pressInterval = loopCounter;
             System.out.println("Left");
         } else if (code == KeyEvent.VK_DOWN) {
-            fallSpeed = 5;
-            System.out.println("Fall");
+//            fallSpeed = 5;
+            // Temporary Implementation
+            // TODO: Switch back and support correct implementation
+            currentBlock.move(0,1);
+            System.out.println("Down");
         } else if (code == KeyEvent.VK_UP) {
             currentBlock.autoFall();
             spawnNewPiece();
-            System.out.println("Drop");
         } else if (code == KeyEvent.VK_Z) {
             currentBlock.rotateCounterClockwise();
-            System.out.println("CounterClockwise");
         } else if (code == KeyEvent.VK_X) {
             currentBlock.rotateClockwise();
-            System.out.println("Clockwise");
         } else if (code == KeyEvent.VK_SPACE) {
             holdBlock();
-            System.out.println("Hold");
         }
     }
 

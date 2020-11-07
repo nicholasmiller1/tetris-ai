@@ -1,29 +1,23 @@
-package Ai.pathfinding;
+package Ai.pathgeneration;
 
-import Ai.pathfinding.generics.GraphNode;
+import Game.GameBoard;
+import Game.blocks.Block;
 
-import java.util.Objects;
-
-public class Position implements GraphNode {
-    private final String id;
+public class Position {
     private final int x;
     private final int y;
     private final int orientation;
 
-    public Position(int x, int y, int orientation) {
-        this(x + "" + y + "" + orientation, x, y, orientation);
+    public Position() {
+        this.x = 0;
+        this.y = 0;
+        this.orientation = 0;
     }
 
-    public Position(String id, int x, int y, int orientation) {
-        this.id = id;
+    public Position(int x, int y, int orientation) {
         this.x = x;
         this.y = y;
         this.orientation = orientation;
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     public int getX() {
@@ -41,8 +35,7 @@ public class Position implements GraphNode {
     @Override
     public String toString() {
         return "Position{" +
-                "id='" + id + '\'' +
-                ", x=" + x +
+                "x=" + x +
                 ", y=" + y +
                 ", orientation=" + orientation +
                 '}';
@@ -64,7 +57,24 @@ public class Position implements GraphNode {
                 this.orientation == position.orientation;
     }
 
-    public boolean isValid() {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.x;
+        result = prime * result + this.y;
+        result = prime * result + this.orientation;
+        return result;
+    }
+
+    public boolean checkCollisionConditions(int xIncrement, int yIncrement) {
+        int testX = this.x + xIncrement;
+        int testY = this.y + yIncrement;
+
+        if (testX >= 10 || testX < 0 || testY >= 20) {
+            return false;
+        }
+
         return true;
     }
 }

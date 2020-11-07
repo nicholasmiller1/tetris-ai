@@ -2,6 +2,8 @@ package Game.blocks;
 
 import Game.GameBoard;
 
+import java.util.Arrays;
+
 public class Block {
 
     private int[] coordinates;
@@ -10,6 +12,18 @@ public class Block {
     private final int[] boundingBoxCorner;
     private int rotationState;
     private final int[][][] walkKickTransformations;
+
+    public Block(Block block) {
+        this(null, block.getBlockType());
+
+        int[] oldCoordinates = block.getCoordinates();
+        int[] newCoordinates = new int[oldCoordinates.length];
+        for (int i = 0; i < oldCoordinates.length; i++) {
+            newCoordinates[i] = oldCoordinates[i];
+        }
+
+        this.coordinates = newCoordinates;
+    }
 
     public Block(int[] coordinates, int blockType) {
         this.coordinates = coordinates;
@@ -76,6 +90,10 @@ public class Block {
 
     public int getBlockType() {
         return blockType;
+    }
+
+    public int getRotationState() {
+        return rotationState;
     }
 
     public void rotateCounterClockwise() {
@@ -151,7 +169,6 @@ public class Block {
         return true;
     }
 
-
     // 1 -> IBlock | 2 -> JBlock | 3 -> LBlock | 4 -> OBlock | 5 -> SBlock | 6 -> TBlock | 7 -> ZBlock
     public static Block createNewBlock(int blockType) {
         return switch (blockType) {
@@ -164,5 +181,14 @@ public class Block {
             case 7 -> new Block(new int[]{3, -1, 4, 0, 4, -1, 5, 0}, blockType);
             default -> null;
         };
+    }
+
+    @Override
+    public String toString() {
+        return "Block{" +
+                "coordinates=" + Arrays.toString(coordinates) +
+                ", blockType=" + blockType +
+                ", rotationState=" + rotationState +
+                '}';
     }
 }
