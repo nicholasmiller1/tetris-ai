@@ -1,5 +1,7 @@
 package Ai.pathgeneration;
 
+import Game.blocks.Block;
+
 import java.util.*;
 
 public abstract class PathGenerator {
@@ -10,11 +12,11 @@ public abstract class PathGenerator {
      * @param from The starting position
      * @return A map of Position to a Queue of Commands
      */
-    public static Map<Position, Queue<Command>> generatePossibleSequences(Position from) {
+    public static Map<Block, Queue<Command>> generatePossibleSequences(Block from) {
         // Defines all finishedSequences where the piece has reached an end
-        Map<Position, Queue<Command>> finishedSequences = new HashMap<>();
+        Map<Block, Queue<Command>> finishedSequences = new HashMap<>();
         // Defines all known nodes in the graph mapping a position to a route
-        Set<Position> allNodes = new HashSet<>();
+        Set<Block> allNodes = new HashSet<>();
         // Defines the remaining paths to check
         Queue<RoutePosition> openSet = new PriorityQueue<>();
 

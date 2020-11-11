@@ -36,7 +36,7 @@ public class GameBoard extends PApplet {
     public void setup() {
         loopCounter = 0;
         pressInterval = 0;
-        fallSpeed = 60;
+        fallSpeed = 0; // Should be 60
         heldBlockType = 0;
         blockBag = new Stack<>();
 
@@ -109,7 +109,7 @@ public class GameBoard extends PApplet {
     }
 
     private void moveCurrentBlock(Block b, int loopCounter) {
-        if (loopCounter % fallSpeed == 0) {
+        if (fallSpeed != 0 && loopCounter % fallSpeed == 0) {
             if(!b.move(0, 1)) {
                 spawnNewPiece();
             }
@@ -193,6 +193,10 @@ public class GameBoard extends PApplet {
 
         fill(0);
         text("Line Clears: " + lineClears, SCREEN_WIDTH/2.0f - 35, STAGE_BORDERS[1] - 15);
+    }
+
+    public Block getCurrentBlock() {
+        return currentBlock;
     }
 }
 

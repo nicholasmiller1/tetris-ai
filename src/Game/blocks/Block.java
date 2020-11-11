@@ -125,6 +125,19 @@ public class Block {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Block block = (Block) o;
+        return Arrays.equals(coordinates, block.coordinates);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(coordinates);
+    }
+
     public void rotateClockwise() {
         int[] resetCoordinates = coordinates;
 
@@ -154,7 +167,7 @@ public class Block {
         }
     }
 
-    private boolean checkCollisions(int xIncrement, int yIncrement) {
+    public boolean checkCollisions(int xIncrement, int yIncrement) {
         for (int i = 0; i < coordinates.length; i += 2) {
             int testX = coordinates[i] + xIncrement;
             int testY = coordinates[i+1] + yIncrement;
@@ -192,3 +205,4 @@ public class Block {
                 '}';
     }
 }
+
