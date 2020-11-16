@@ -9,7 +9,7 @@ public class Block {
     private int[] coordinates;
     private final int blockType;
     private final int boundingBoxSize;
-    private final int[] boundingBoxCorner;
+    private int[] boundingBoxCorner;
     private int rotationState;
     private final int[][][] walkKickTransformations;
 
@@ -22,6 +22,13 @@ public class Block {
             newCoordinates[i] = oldCoordinates[i];
         }
 
+        int[] oldBoundingBox = block.getBoundingBoxCorner();
+        int[] newBoundingBox = new int[oldBoundingBox.length];
+        for (int i = 0; i < oldBoundingBox.length; i++) {
+            newBoundingBox[i] = oldBoundingBox[i];
+        }
+
+        this.boundingBoxCorner = newBoundingBox;
         this.coordinates = newCoordinates;
     }
 
@@ -96,7 +103,15 @@ public class Block {
         return rotationState;
     }
 
-    public void rotateCounterClockwise() {
+    public int[] getBoundingBoxCorner() {
+        return boundingBoxCorner;
+    }
+
+    public int getBoundingBoxSize() {
+        return boundingBoxSize;
+    }
+
+    public boolean rotateCounterClockwise() {
         int[] resetCoordinates = coordinates;
 
         for (int i = 0; i < coordinates.length; i += 2) {
@@ -116,16 +131,31 @@ public class Block {
                     } else {
                         rotationState = 3;
                     }
-                    return;
+                    return true;
                 }
             }
 
 
             this.coordinates = resetCoordinates;
         }
+
+        return false;
     }
 
-    public void rotateClockwise() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Block block = (Block) o;
+        return Arrays.equals(coordinates, block.coordinates);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(coordinates);
+    }
+
+    public boolean rotateClockwise() {
         int[] resetCoordinates = coordinates;
 
         for (int i = 0; i < coordinates.length; i += 2) {
@@ -145,16 +175,18 @@ public class Block {
                     } else {
                         rotationState = 0;
                     }
-                    return;
+                    return true;
                 }
             }
 
 
             this.coordinates = resetCoordinates;
         }
+
+        return false;
     }
 
-    private boolean checkCollisions(int xIncrement, int yIncrement) {
+    public boolean checkCollisions(int xIncrement, int yIncrement) {
         for (int i = 0; i < coordinates.length; i += 2) {
             int testX = coordinates[i] + xIncrement;
             int testY = coordinates[i+1] + yIncrement;
@@ -192,3 +224,4 @@ public class Block {
                 '}';
     }
 }
+

@@ -1,25 +1,24 @@
 package Ai.pathgeneration;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import Game.blocks.Block;
+
+import java.util.*;
 
 public class RoutePosition implements Comparable<RoutePosition> {
-    private Position current;
+    private Block current;
     private LinkedList<Command> sequence;
 
-    public RoutePosition(Position current) {
+    public RoutePosition(Block current) {
         this(current, new LinkedList<>());
     }
 
-    public RoutePosition(Position current, LinkedList<Command> sequence) {
+    public RoutePosition(Block current, LinkedList<Command> sequence) {
         this.current = current;
         this.sequence = sequence;
     }
 
     public Set<RoutePosition> getConnections() {
-        Set<RoutePosition> connections = new HashSet<>();
+        Set<RoutePosition> connections = new LinkedHashSet<>();
 
         Command lastCommand = sequence.isEmpty() ? null : sequence.getLast();
 
@@ -36,19 +35,26 @@ public class RoutePosition implements Comparable<RoutePosition> {
     private RoutePosition applyCommand(Command command) {
         int xIncrement = command.getIncrements()[0];
         int yIncrement = command.getIncrements()[1];
-        if (current.checkCollisionConditions(xIncrement, yIncrement)) {
-            Position newPosition = new Position(current.getX() + xIncrement, current.getY() + yIncrement, current.getOrientation());
-            LinkedList<Command> newSequence = new LinkedList<>(sequence);
+        int rotation = command.getIncrements()[2];
 
-            newSequence.add(command);
-            return new RoutePosition(newPosition, newSequence);
-        } else {
-            return null;
+        Block newBlock = new Block(current);
+        LinkedList<Command> newSequence = new LinkedList<>(sequence);
+        newSequence.add(command);
+
+        RoutePosition newRoutePosition = null;
+        if (rotation == 0) {
+            newRoutePosition = newBlock.move(xIncrement, yIncrement) ? new RoutePosition(newBlock, newSequence) : null;
+        } else if (rotation == 1) {
+            newRoutePosition = newBlock.rotateClockwise() ? new RoutePosition(newBlock, newSequence) : null;
+        } else if (rotation == -1) {
+            newRoutePosition = newBlock.rotateCounterClockwise() ? new RoutePosition(newBlock, newSequence) : null;
         }
+
+        return newRoutePosition;
     }
 
     public boolean isEndPosition() {
-        return !current.checkCollisionConditions(0, 1);
+        return !current.checkCollisions(0, 1);
     }
 
     @Override
@@ -56,11 +62,11 @@ public class RoutePosition implements Comparable<RoutePosition> {
         return Integer.compare(this.sequence.size(), o.sequence.size());
     }
 
-    public Position getCurrent() {
+    public Block getCurrent() {
         return current;
     }
 
-    public void setCurrent(Position current) {
+    public void setCurrent(Block current) {
         this.current = current;
     }
 

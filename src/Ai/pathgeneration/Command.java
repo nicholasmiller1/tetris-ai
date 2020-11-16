@@ -1,9 +1,8 @@
 package Ai.pathgeneration;
 
 import java.awt.event.KeyEvent;
-import java.security.Key;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -49,7 +48,7 @@ public class Command {
     }
 
     public static Set<Command> getPossibleCommands(Command lastCommand) {
-        Set<Command> possibleCommands = new HashSet<>();
+        Set<Command> possibleCommands = new LinkedHashSet<>();
 
         if (lastCommand == null || !lastCommand.getStringInput().equals("Right")) {
             possibleCommands.add(new Command("Left"));
@@ -60,12 +59,12 @@ public class Command {
         }
 
         possibleCommands.add(new Command("Down"));
+        possibleCommands.add(new Command("Clockwise"));
+        possibleCommands.add(new Command("Counterclockwise"));
+
         //TODO: Implement drop and hold capabilities
 //        possibleCommands.add(new Command("Drop"));
 //        possibleCommands.add(new Command("Hold"));
-        //TODO: Implement rotation capabilities
-//        possibleCommands.add(new Command("Clockwise"));
-//        possibleCommands.add(new Command("Counterclockwise"));
 
         return possibleCommands;
     }
@@ -84,7 +83,7 @@ public class Command {
 
     @Override
     public String toString() {
-        return stringInput.substring(0,1);
+        return stringInput;
     }
 
     @Override
