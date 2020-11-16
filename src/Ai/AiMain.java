@@ -12,6 +12,7 @@ import java.util.*;
 public class AiMain {
 
     private static GameBoard game;
+    private static Thread currentThread;
 
     public static void main(String[] args) {
         setupEnvironment();
@@ -24,7 +25,11 @@ public class AiMain {
     }
 
     public static void runNextBlock(Block from) {
-        Thread t = new Thread(new Runnable() {
+        if (currentThread != null && currentThread.isAlive()) {
+            currentThread.interrupt();
+        }
+
+        currentThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Map<Block, Queue<Command>> generatedSequences = PathGenerator.generatePossibleSequences(from);
@@ -35,15 +40,20 @@ public class AiMain {
                 try {
                     executeSequence(generatedSequences.values().iterator().next());
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("executeSequence was interrupted");
                 }
             }
         });
-        t.start();
+        currentThread.start();
     }
 
     private static void executeSequence(Queue<Command> sequence) throws InterruptedException {
         for (Command c : sequence) {
+            if (currentThread.isInterrupted()) {
+                System.out.println("Thread was interrupted");
+                return;
+            }
+
             game.processInput(c.getKeyInput());
             Thread.sleep(100);
         }
