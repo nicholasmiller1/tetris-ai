@@ -81,8 +81,10 @@ public class GameBoard extends PApplet {
             spawnNewPiece();
         } else if (code == KeyEvent.VK_Z) {
             currentBlock.rotateCounterClockwise();
+            System.out.println("Counterclockwise");
         } else if (code == KeyEvent.VK_X) {
             currentBlock.rotateClockwise();
+            System.out.println("Clockwise");
         } else if (code == KeyEvent.VK_SPACE) {
             holdBlock();
         }

@@ -2,10 +2,7 @@ package Ai.pathgeneration;
 
 import Game.blocks.Block;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class RoutePosition implements Comparable<RoutePosition> {
     private Block current;
@@ -21,7 +18,7 @@ public class RoutePosition implements Comparable<RoutePosition> {
     }
 
     public Set<RoutePosition> getConnections() {
-        Set<RoutePosition> connections = new HashSet<>();
+        Set<RoutePosition> connections = new LinkedHashSet<>();
 
         Command lastCommand = sequence.isEmpty() ? null : sequence.getLast();
 
@@ -38,12 +35,21 @@ public class RoutePosition implements Comparable<RoutePosition> {
     private RoutePosition applyCommand(Command command) {
         int xIncrement = command.getIncrements()[0];
         int yIncrement = command.getIncrements()[1];
+        int rotation = command.getIncrements()[2];
 
         Block newBlock = new Block(current);
         LinkedList<Command> newSequence = new LinkedList<>(sequence);
         newSequence.add(command);
 
-        RoutePosition newRoutePosition = newBlock.move(xIncrement, yIncrement) ? new RoutePosition(newBlock, newSequence) : null;
+        RoutePosition newRoutePosition = null;
+        if (rotation == 0) {
+            newRoutePosition = newBlock.move(xIncrement, yIncrement) ? new RoutePosition(newBlock, newSequence) : null;
+        } else if (rotation == 1) {
+            newRoutePosition = newBlock.rotateClockwise() ? new RoutePosition(newBlock, newSequence) : null;
+        } else if (rotation == -1) {
+            newRoutePosition = newBlock.rotateCounterClockwise() ? new RoutePosition(newBlock, newSequence) : null;
+        }
+
         return newRoutePosition;
     }
 

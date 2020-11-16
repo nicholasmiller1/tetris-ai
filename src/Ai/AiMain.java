@@ -2,6 +2,7 @@ package Ai;
 
 import Ai.pathgeneration.Command;
 import Ai.pathgeneration.PathGenerator;
+import Ai.pathgeneration.RoutePosition;
 import Game.GameBoard;
 import Game.blocks.Block;
 import processing.core.PApplet;
