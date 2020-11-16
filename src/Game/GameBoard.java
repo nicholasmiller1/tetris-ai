@@ -1,5 +1,6 @@
 package Game;
 
+import Ai.AiMain;
 import Game.blocks.*;
 import processing.core.PApplet;
 
@@ -36,7 +37,7 @@ public class GameBoard extends PApplet {
     public void setup() {
         loopCounter = 0;
         pressInterval = 0;
-        fallSpeed = 0; // Should be 60
+        fallSpeed = 60; // Should be 60
         heldBlockType = 0;
         blockBag = new Stack<>();
 
@@ -66,25 +67,20 @@ public class GameBoard extends PApplet {
     public void processInput(int code) {
         if (code == KeyEvent.VK_RIGHT) {
             currentBlock.move(1,0);
-            System.out.println("Right");
         } else if (code == KeyEvent.VK_LEFT) {
             currentBlock.move(-1,0);
-            System.out.println("Left");
         } else if (code == KeyEvent.VK_DOWN) {
 //            fallSpeed = 5;
             // Temporary Implementation
             // TODO: Switch back and support correct implementation
             currentBlock.move(0,1);
-            System.out.println("Down");
         } else if (code == KeyEvent.VK_UP) {
             currentBlock.autoFall();
             spawnNewPiece();
         } else if (code == KeyEvent.VK_Z) {
             currentBlock.rotateCounterClockwise();
-            System.out.println("Counterclockwise");
         } else if (code == KeyEvent.VK_X) {
             currentBlock.rotateClockwise();
-            System.out.println("Clockwise");
         } else if (code == KeyEvent.VK_SPACE) {
             holdBlock();
         }
@@ -111,8 +107,15 @@ public class GameBoard extends PApplet {
     }
 
     private void moveCurrentBlock(Block b, int loopCounter) {
+        // TODO: Restore this code
+//        if (fallSpeed != 0 && loopCounter % fallSpeed == 0) {
+//            if(!b.move(0, 1)) {
+//                spawnNewPiece();
+//            }
+//        }
+
         if (fallSpeed != 0 && loopCounter % fallSpeed == 0) {
-            if(!b.move(0, 1)) {
+            if(!b.checkCollisions(0, 1)) {
                 spawnNewPiece();
             }
         }
@@ -134,6 +137,7 @@ public class GameBoard extends PApplet {
         }
 
         currentBlock = Block.createNewBlock(blockBag.pop());
+        AiMain.runNextBlock(currentBlock);
     }
 
     private void holdBlock() {

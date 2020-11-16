@@ -83,7 +83,7 @@ public class Command {
 
     @Override
     public String toString() {
-        return stringInput.substring(0,1);
+        return stringInput;
     }
 
     @Override
