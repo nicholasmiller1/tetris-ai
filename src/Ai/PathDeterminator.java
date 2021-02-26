@@ -1,20 +1,67 @@
 package Ai;
 
 import Ai.pathgeneration.Command;
+import Game.GameBoard;
 import Game.blocks.Block;
 
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
 public class PathDeterminator {
+
+    // TODO: Write determination algorithm
+    // Criteria: Minimize full holes, minimize height (maybe minimize pillars?)
+    // Sample Weights: 2 * numOfHoles + 1.2 * height + (3 * numOfPillars)
+    // Additional Attributes can be added later (such as half-holes, bumpiness, etc)
     public static Queue<Command> chooseBestPath(Map<Block, Queue<Command>> sequences) {
-        Queue<Command> bestSequence = sequences.values().iterator().next();
+        Queue<Command> bestSequence = new LinkedList<>();
+        double bestScore = Integer.MAX_VALUE;
 
-        // TODO: Write determination algorithm
-        // Criteria: Minimize full holes, minimize height (maybe minimize pillars?)
-        // Sample Weights: 2 * numOfHoles + 1.2 * height + (3 * numOfPillars)
-        // Additional Attributes can be added later (such as half-holes, bumpiness, etc)
+        for (Block position : sequences.keySet()) {
+            double score = generateScore(position);
 
+            if (score < bestScore) {
+                bestScore = score;
+                bestSequence = sequences.get(position);
+            }
+        }
+
+        System.out.println(bestScore + "    |    " + bestSequence);
         return bestSequence;
+    }
+
+    private static double generateScore(Block position) {
+        int[][] board = GameBoard.gameBoard;
+        int[] coords = position.getCoordinates();
+        int maxHeight = 0;
+
+        // Update the gameboard as if the piece landed and find the max height
+        for (int i = 0; i < coords.length; i += 2) {
+            board[coords[i+1]][coords[i]] = 1;
+
+            if (coords[i+1] < maxHeight) {
+                maxHeight = coords[i+1];
+            }
+        }
+
+        // Check for holes
+        int numHoles = 0;
+        for (int i = 0; i < coords.length; i += 2) {
+            for (int j = coords[i+1]; j < board.length; j++) {
+                if (board[j][i] == 0) {
+                    numHoles++;
+                }
+            }
+        }
+
+        // Remove edits to gameboard
+        for (int i = 0; i < coords.length; i += 2) {
+            board[coords[i+1]][coords[i]] = 0;
+        }
+
+        return 2.0 * numHoles + 1.2 * (board.length - maxHeight);
     }
 }

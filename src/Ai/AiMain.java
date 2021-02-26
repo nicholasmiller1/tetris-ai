@@ -33,15 +33,16 @@ public class AiMain {
             @Override
             public void run() {
                 Map<Block, Queue<Command>> generatedSequences = PathGenerator.generatePossibleSequences(from);
-//                System.out.println(generatedSequences);
-//                System.out.println(generatedSequences.size());
 
+//                System.out.print(generatedSequences + "    |    ");
                 Queue<Command> chosenSequence = PathDeterminator.chooseBestPath(generatedSequences);
+//                System.out.println(chosenSequence);
 
                 try {
                     executeSequence(chosenSequence);
                 } catch (InterruptedException e) {
                     System.out.println("executeSequence was interrupted");
+                    e.printStackTrace();
                 }
             }
         });
@@ -56,7 +57,7 @@ public class AiMain {
             }
 
             game.processInput(c.getKeyInput());
-            Thread.sleep(100);
+            Thread.sleep(1000);
         }
     }
 }
