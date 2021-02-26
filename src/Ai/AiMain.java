@@ -33,12 +33,13 @@ public class AiMain {
             @Override
             public void run() {
                 Map<Block, Queue<Command>> generatedSequences = PathGenerator.generatePossibleSequences(from);
+//                System.out.println(generatedSequences);
+//                System.out.println(generatedSequences.size());
 
-                System.out.println(generatedSequences);
-                System.out.println(generatedSequences.size());
+                Queue<Command> chosenSequence = PathDeterminator.chooseBestPath(generatedSequences);
 
                 try {
-                    executeSequence(generatedSequences.values().iterator().next());
+                    executeSequence(chosenSequence);
                 } catch (InterruptedException e) {
                     System.out.println("executeSequence was interrupted");
                 }
