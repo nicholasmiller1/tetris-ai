@@ -26,7 +26,11 @@ public class AiMain {
 
     public static void runNextBlock(Block from) {
         if (currentThread != null && currentThread.isAlive()) {
-            currentThread.interrupt();
+            System.out.println("Waiting...");
+            while (currentThread.isAlive()) {
+                // wait
+            }
+//            currentThread.interrupt();
         }
 
         currentThread = new Thread(new Runnable() {
@@ -50,14 +54,17 @@ public class AiMain {
     }
 
     private static void executeSequence(Queue<Command> sequence) throws InterruptedException {
+        System.out.print("00.0    |    [");
         for (Command c : sequence) {
             if (currentThread.isInterrupted()) {
                 System.out.println("Thread was interrupted");
                 return;
             }
 
+            System.out.print(c.getStringInput() + ", ");
             game.processInput(c.getKeyInput());
-            Thread.sleep(1000);
+            Thread.sleep(100);
         }
+        System.out.println();
     }
 }

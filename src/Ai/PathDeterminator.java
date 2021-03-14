@@ -26,6 +26,7 @@ public class PathDeterminator {
             if (score < bestScore) {
                 bestScore = score;
                 bestSequence = sequences.get(position);
+                System.out.println(position);
             }
         }
 
