@@ -4,6 +4,7 @@ import Ai.AiMain;
 import Game.blocks.*;
 import processing.core.PApplet;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 
@@ -48,16 +49,42 @@ public class GameBoard extends PApplet {
             }
         }
 
+//        gameBoard = new int[][] {
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,0,0,0},
+//                {0,0,0,0,0,0,0,1,1,1},
+//                {0,1,0,1,1,0,1,0,1,1},
+//                {1,1,1,0,1,1,1,1,1,0},
+//                {1,1,1,1,1,0,1,1,1,1},
+//                {0,1,1,1,1,1,1,1,1,1},
+//                {1,1,1,0,1,1,1,1,0,1},
+//                {0,1,1,1,1,0,1,1,0,1},
+//        };
+//
+//        currentBlock = Block.createNewBlock(6);
+//        AiMain.generateNewSequence(currentBlock);
+
         spawnNewPiece();
     }
 
     public void draw() {
-        checkLineClears();
         drawBackground();
         loopCounter += 1;
 
         moveCurrentBlock(currentBlock, loopCounter);
         displayBlock(currentBlock);
+        displayHeldBlock();
     }
 
     public void keyPressed() {
@@ -106,6 +133,31 @@ public class GameBoard extends PApplet {
         }
     }
 
+    private void displayHeldBlock() {
+        fill(255);
+        stroke(0);
+        strokeWeight(3);
+
+        int size = 5;
+        square(STAGE_BORDERS[0] - ((size + 1) * SQUARE_SIZE), STAGE_BORDERS[1], size * SQUARE_SIZE);
+
+        strokeWeight(1);
+//        for (int r = 0; r < size; r++) {
+//            for (int c = 0; c < size; c++) {
+//                square(STAGE_BORDERS[0] - ((size - c) * SQUARE_SIZE) - 10, STAGE_BORDERS[1] + ((size - r - 1) * SQUARE_SIZE), SQUARE_SIZE);
+//            }
+//        }
+
+        if (heldBlockType != 0) {
+            fill(COLOR_VALUES[heldBlockType][0], COLOR_VALUES[heldBlockType][1], COLOR_VALUES[heldBlockType][2]);
+            int[] coords = Block.getBlockStartingCoordinates(heldBlockType);
+
+            for (int i = 0; i < coords.length; i += 2) {
+                square(STAGE_BORDERS[0] + (SQUARE_SIZE * (coords[i] - (size + 3))), STAGE_BORDERS[1] + (SQUARE_SIZE * (coords[i + 1] + 2)), SQUARE_SIZE);
+            }
+        }
+    }
+
     private void moveCurrentBlock(Block b, int loopCounter) {
         // TODO: Restore this code
 //        if (fallSpeed != 0 && loopCounter % fallSpeed == 0) {
@@ -113,21 +165,17 @@ public class GameBoard extends PApplet {
 //                spawnNewPiece();
 //            }
 //        }
-
-        if (fallSpeed != 0 && loopCounter % fallSpeed == 0) {
-            if(!b.checkCollisions(0, 1)) {
-                spawnNewPiece();
-            }
-        }
     }
 
-    private void spawnNewPiece() {
+    public void spawnNewPiece() {
         if (currentBlock != null) {
             int[] coords = currentBlock.getCoordinates();
             for (int i = 0; i < coords.length; i += 2) {
                 gameBoard[coords[i+1]][coords[i]] = currentBlock.getBlockType();
             }
         }
+
+        checkLineClears();
 
         if (blockBag.isEmpty()) {
             for (int i = 1; i <= 7; i++) {
@@ -137,7 +185,7 @@ public class GameBoard extends PApplet {
         }
 
         currentBlock = Block.createNewBlock(blockBag.pop());
-        AiMain.runNextBlock(currentBlock);
+        AiMain.generateNewSequence(currentBlock);
     }
 
     private void holdBlock() {

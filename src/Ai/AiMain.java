@@ -12,9 +12,25 @@ import java.util.*;
 public class AiMain {
 
     private static GameBoard game;
+    private static Queue<Command> sequence;
 
     public static void main(String[] args) {
         setupEnvironment();
+        sequence = new LinkedList<>();
+
+        while (true) {
+            try {
+                Thread.sleep(75);
+                if (!sequence.isEmpty()) {
+                    game.processInput(sequence.poll().getKeyInput());
+                } else {
+                    game.spawnNewPiece();
+                }
+            } catch (InterruptedException e) {
+                System.out.println("Sequence execution was interrupted");
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void setupEnvironment() {
@@ -23,29 +39,7 @@ public class AiMain {
         PApplet.runSketch(processingArgs, game);
     }
 
-    public static void runNextBlock(Block from) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<Block, Queue<Command>> generatedSequences = PathGenerator.generatePossibleSequences(from);
-
-                System.out.println(generatedSequences);
-                System.out.println(generatedSequences.size());
-
-                try {
-                    executeSequence(generatedSequences.values().iterator().next());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
-    }
-
-    private static void executeSequence(Queue<Command> sequence) throws InterruptedException {
-        for (Command c : sequence) {
-            game.processInput(c.getKeyInput());
-            Thread.sleep(100);
-        }
+    public static void generateNewSequence(Block from) {
+        sequence = PathDeterminator.chooseBestPath(PathGenerator.generatePossibleSequences(from));
     }
 }
