@@ -204,14 +204,18 @@ public class Block {
 
     // 1 -> IBlock | 2 -> JBlock | 3 -> LBlock | 4 -> OBlock | 5 -> SBlock | 6 -> TBlock | 7 -> ZBlock
     public static Block createNewBlock(int blockType) {
+        return new Block(getBlockStartingCoordinates(blockType), blockType);
+    }
+
+    public static int[] getBlockStartingCoordinates(int blockType) {
         return switch (blockType) {
-            case 1 -> new Block(new int[]{3, 0, 4, 0, 5, 0, 6, 0}, blockType);
-            case 2 -> new Block(new int[]{3, -1, 4, 0, 3, 0, 5, 0}, blockType);
-            case 3 -> new Block(new int[]{3, 0, 4, 0, 5, 0, 5, -1}, blockType);
-            case 4 -> new Block(new int[]{4, -1, 4, 0, 5, -1, 5, 0}, blockType);
-            case 5 -> new Block(new int[]{3, 0, 4, 0, 4, -1, 5, -1}, blockType);
-            case 6 -> new Block(new int[]{3, 0, 4, 0, 4, -1, 5, 0}, blockType);
-            case 7 -> new Block(new int[]{3, -1, 4, 0, 4, -1, 5, 0}, blockType);
+            case 1 -> new int[]{3, 0, 4, 0, 5, 0, 6, 0};
+            case 2 -> new int[]{3, -1, 4, 0, 3, 0, 5, 0};
+            case 3 -> new int[]{3, 0, 4, 0, 5, 0, 5, -1};
+            case 4 -> new int[]{4, -1, 4, 0, 5, -1, 5, 0};
+            case 5 -> new int[]{3, 0, 4, 0, 4, -1, 5, -1};
+            case 6 -> new int[]{3, 0, 4, 0, 4, -1, 5, 0};
+            case 7 -> new int[]{3, -1, 4, 0, 4, -1, 5, 0};
             default -> null;
         };
     }

@@ -51,13 +51,12 @@ public class PathDeterminator {
         // Algorithm idea (loop through left of farthest left coordinate to right of farthest right coordinate)
         // Keep going down to check for holes until a non-hole is reached (to account for pre-existing holes)
         int numHoles = 0;
-        for (int i = 0; i < board[0].length; i ++) {
-            for (int j = maxHeight; j < board.length; j++) {
-                if (board[j][i] == 0 && board[j-1][i] != 0) {
-                    numHoles++;
-                }
-            }
-        }
+//        for (int i = 0; i < coords.length; i += 2) {
+//            int j = coords[i+1] + 1;
+//            while (j < board.length && board[j][i] == 0) {
+//                numHoles++;
+//            }
+//        }
 
         // Remove edits to gameboard
         for (int i = 0; i < coords.length; i += 2) {

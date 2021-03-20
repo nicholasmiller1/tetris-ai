@@ -84,6 +84,7 @@ public class GameBoard extends PApplet {
 
         moveCurrentBlock(currentBlock, loopCounter);
         displayBlock(currentBlock);
+        displayHeldBlock();
     }
 
     public void keyPressed() {
@@ -128,6 +129,31 @@ public class GameBoard extends PApplet {
         for (int i = 0; i < positions.length; i += 2) {
             if (positions[i] < 10 && positions[i] >= 0 && positions[i+1] < 20 && positions[i+1] >= 0) {
                 square(STAGE_BORDERS[0] + (SQUARE_SIZE * positions[i]), STAGE_BORDERS[1] + (SQUARE_SIZE * positions[i + 1]), SQUARE_SIZE);
+            }
+        }
+    }
+
+    private void displayHeldBlock() {
+        fill(255);
+        stroke(0);
+        strokeWeight(3);
+
+        int size = 5;
+        square(STAGE_BORDERS[0] - ((size + 1) * SQUARE_SIZE), STAGE_BORDERS[1], size * SQUARE_SIZE);
+
+        strokeWeight(1);
+//        for (int r = 0; r < size; r++) {
+//            for (int c = 0; c < size; c++) {
+//                square(STAGE_BORDERS[0] - ((size - c) * SQUARE_SIZE) - 10, STAGE_BORDERS[1] + ((size - r - 1) * SQUARE_SIZE), SQUARE_SIZE);
+//            }
+//        }
+
+        if (heldBlockType != 0) {
+            fill(COLOR_VALUES[heldBlockType][0], COLOR_VALUES[heldBlockType][1], COLOR_VALUES[heldBlockType][2]);
+            int[] coords = Block.getBlockStartingCoordinates(heldBlockType);
+
+            for (int i = 0; i < coords.length; i += 2) {
+                square(STAGE_BORDERS[0] + (SQUARE_SIZE * (coords[i] - (size + 3))), STAGE_BORDERS[1] + (SQUARE_SIZE * (coords[i + 1] + 2)), SQUARE_SIZE);
             }
         }
     }
