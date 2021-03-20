@@ -30,6 +30,7 @@ public class Block {
 
         this.boundingBoxCorner = newBoundingBox;
         this.coordinates = newCoordinates;
+        this.rotationState = block.rotationState;
     }
 
     public Block(int[] coordinates, int blockType) {

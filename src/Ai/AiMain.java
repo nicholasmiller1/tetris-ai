@@ -12,10 +12,25 @@ import java.util.*;
 public class AiMain {
 
     private static GameBoard game;
-    private static Thread currentThread;
+    private static Queue<Command> sequence;
 
     public static void main(String[] args) {
         setupEnvironment();
+        sequence = new LinkedList<>();
+
+        while (true) {
+            try {
+                Thread.sleep(75);
+                if (!sequence.isEmpty()) {
+                    game.processInput(sequence.poll().getKeyInput());
+                } else {
+                    game.spawnNewPiece();
+                }
+            } catch (InterruptedException e) {
+                System.out.println("Sequence execution was interrupted");
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void setupEnvironment() {
@@ -24,47 +39,7 @@ public class AiMain {
         PApplet.runSketch(processingArgs, game);
     }
 
-    public static void runNextBlock(Block from) {
-        if (currentThread != null && currentThread.isAlive()) {
-            System.out.println("Waiting...");
-            while (currentThread.isAlive()) {
-                // wait
-            }
-//            currentThread.interrupt();
-        }
-
-        currentThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<Block, Queue<Command>> generatedSequences = PathGenerator.generatePossibleSequences(from);
-
-//                System.out.print(generatedSequences + "    |    ");
-                Queue<Command> chosenSequence = PathDeterminator.chooseBestPath(generatedSequences);
-//                System.out.println(chosenSequence);
-
-                try {
-                    executeSequence(chosenSequence);
-                } catch (InterruptedException e) {
-                    System.out.println("executeSequence was interrupted");
-                    e.printStackTrace();
-                }
-            }
-        });
-        currentThread.start();
-    }
-
-    private static void executeSequence(Queue<Command> sequence) throws InterruptedException {
-        System.out.print("00.0    |    [");
-        for (Command c : sequence) {
-            if (currentThread.isInterrupted()) {
-                System.out.println("Thread was interrupted");
-                return;
-            }
-
-            System.out.print(c.getStringInput() + ", ");
-            game.processInput(c.getKeyInput());
-            Thread.sleep(100);
-        }
-        System.out.println();
+    public static void generateNewSequence(Block from) {
+        sequence = PathDeterminator.chooseBestPath(PathGenerator.generatePossibleSequences(from));
     }
 }

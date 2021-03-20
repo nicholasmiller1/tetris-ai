@@ -12,7 +12,6 @@ import java.util.Queue;
 
 public class PathDeterminator {
 
-    // TODO: Write determination algorithm
     // Criteria: Minimize full holes, minimize height (maybe minimize pillars?)
     // Sample Weights: 2 * numOfHoles + 1.2 * height + (3 * numOfPillars)
     // Additional Attributes can be added later (such as half-holes, bumpiness, etc)
@@ -37,7 +36,7 @@ public class PathDeterminator {
     private static double generateScore(Block position) {
         int[][] board = GameBoard.gameBoard;
         int[] coords = position.getCoordinates();
-        int maxHeight = 0;
+        int maxHeight = board.length;
 
         // Update the gameboard as if the piece landed and find the max height
         for (int i = 0; i < coords.length; i += 2) {
@@ -49,10 +48,12 @@ public class PathDeterminator {
         }
 
         // Check for holes
+        // Algorithm idea (loop through left of farthest left coordinate to right of farthest right coordinate)
+        // Keep going down to check for holes until a non-hole is reached (to account for pre-existing holes)
         int numHoles = 0;
-        for (int i = 0; i < coords.length; i += 2) {
-            for (int j = coords[i+1]; j < board.length; j++) {
-                if (board[j][i] == 0) {
+        for (int i = 0; i < board[0].length; i ++) {
+            for (int j = maxHeight; j < board.length; j++) {
+                if (board[j][i] == 0 && board[j-1][i] != 0) {
                     numHoles++;
                 }
             }

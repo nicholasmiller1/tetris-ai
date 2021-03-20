@@ -4,6 +4,7 @@ import Ai.AiMain;
 import Game.blocks.*;
 import processing.core.PApplet;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 
@@ -62,23 +63,22 @@ public class GameBoard extends PApplet {
 //                {0,0,0,0,0,0,0,0,0,0},
 //                {0,0,0,0,0,0,0,0,0,0},
 //                {0,0,0,0,0,0,0,0,0,0},
-//                {0,0,0,0,0,0,0,0,0,0},
-//                {0,0,0,0,0,0,0,0,0,0},
-//                {0,0,0,0,0,0,0,0,0,0},
-//                {0,0,0,0,0,0,0,0,0,0},
-//                {0,0,0,0,0,0,0,0,0,0},
-//                {0,0,1,0,0,1,1,0,0,1},
-//                {0,1,1,1,0,0,1,1,0,1},
+//                {0,0,0,0,0,0,0,1,1,1},
+//                {0,1,0,1,1,0,1,0,1,1},
+//                {1,1,1,0,1,1,1,1,1,0},
+//                {1,1,1,1,1,0,1,1,1,1},
+//                {0,1,1,1,1,1,1,1,1,1},
+//                {1,1,1,0,1,1,1,1,0,1},
+//                {0,1,1,1,1,0,1,1,0,1},
 //        };
 //
-//        currentBlock = Block.createNewBlock(3);
-//        AiMain.runNextBlock(currentBlock);
+//        currentBlock = Block.createNewBlock(6);
+//        AiMain.generateNewSequence(currentBlock);
 
         spawnNewPiece();
     }
 
     public void draw() {
-        checkLineClears();
         drawBackground();
         loopCounter += 1;
 
@@ -139,21 +139,17 @@ public class GameBoard extends PApplet {
 //                spawnNewPiece();
 //            }
 //        }
-
-        if (fallSpeed != 0 && loopCounter % fallSpeed == 0) {
-            if(!b.checkCollisions(0, 1)) {
-                spawnNewPiece();
-            }
-        }
     }
 
-    private void spawnNewPiece() {
+    public void spawnNewPiece() {
         if (currentBlock != null) {
             int[] coords = currentBlock.getCoordinates();
             for (int i = 0; i < coords.length; i += 2) {
                 gameBoard[coords[i+1]][coords[i]] = currentBlock.getBlockType();
             }
         }
+
+        checkLineClears();
 
         if (blockBag.isEmpty()) {
             for (int i = 1; i <= 7; i++) {
@@ -163,7 +159,7 @@ public class GameBoard extends PApplet {
         }
 
         currentBlock = Block.createNewBlock(blockBag.pop());
-        AiMain.runNextBlock(currentBlock);
+        AiMain.generateNewSequence(currentBlock);
     }
 
     private void holdBlock() {
